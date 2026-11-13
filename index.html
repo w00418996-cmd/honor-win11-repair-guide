@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1769e0">
+  <meta name="description" content="荣耀 HONOR 笔记本 Windows 11 随机蓝屏与系统模块异常的分步排查指南。">
+  <title>荣耀笔记本系统异常修复指南</title>
+  <style>
+    :root{color-scheme:light;--blue:#1769e0;--blue-dark:#104eae;--ink:#17243a;--muted:#64748b;--line:#e3eaf3;--paper:#fff;--wash:#f4f7fb;--soft-blue:#edf5ff;--orange:#a95508;--orange-bg:#fff5e9;--green:#16734a;--green-bg:#eaf8f0;--shadow:0 14px 40px rgba(33,61,103,.08);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:92px}body{margin:0;background:var(--wash);color:var(--ink);line-height:1.65;font-size:16px}a{color:var(--blue);text-underline-offset:3px}button,input,textarea{font:inherit}button{cursor:pointer}.shell{width:min(1060px,calc(100% - 36px));margin:auto}.topbar{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.top-inner{display:flex;align-items:center;gap:18px;min-height:66px}.brand{display:flex;align-items:center;gap:10px;font-weight:750;color:var(--ink);text-decoration:none;white-space:nowrap}.brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--blue);color:white;font-size:15px;font-weight:800}.nav{display:flex;gap:18px;margin-left:auto;overflow:auto;white-space:nowrap;scrollbar-width:none}.nav a{font-size:13px;color:#52627a;text-decoration:none}.nav a:hover{color:var(--blue)}.print-top{flex-shrink:0;border:1px solid var(--line);background:white;border-radius:9px;padding:8px 12px;color:#29405f;font-size:13px;font-weight:650}
+    main{padding:28px 0 64px}.hero{position:relative;overflow:hidden;padding:36px 40px;border-radius:24px;background:linear-gradient(118deg,#104eae 0%,#1769e0 54%,#3e8cf0 100%);color:#fff;box-shadow:0 18px 44px rgba(23,105,224,.2)}.hero:after{content:"";position:absolute;width:320px;height:320px;border:1px solid rgba(255,255,255,.16);border-radius:50%;right:-90px;top:-170px;box-shadow:0 0 0 34px rgba(255,255,255,.045),0 0 0 70px rgba(255,255,255,.035);pointer-events:none}.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.84;font-weight:700}.hero h1{font-size:clamp(28px,4vw,42px);line-height:1.22;letter-spacing:-.025em;margin:9px 0 12px;max-width:680px}.hero p{margin:0;color:rgba(255,255,255,.88);max-width:650px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.button{display:inline-flex;justify-content:center;align-items:center;gap:8px;min-height:46px;padding:10px 16px;border:0;border-radius:11px;text-decoration:none;font-weight:700}.button-light{background:#fff;color:#1357b3}.button-ghost{border:1px solid rgba(255,255,255,.48);background:rgba(255,255,255,.08);color:white}.button-blue{background:var(--blue);color:white}.button-outline{border:1px solid #cdd9e8;background:#fff;color:#29405f}.button:hover{filter:brightness(.97)}
+    .progress-card{display:grid;grid-template-columns:1fr auto;gap:12px 20px;align-items:center;margin:18px 0;padding:18px 22px;background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}.progress-heading{font-size:14px;font-weight:750}.progress-note{font-size:13px;color:var(--muted)}.progress-number{font-size:14px;color:var(--blue-dark);font-weight:800}.bar{grid-column:1/-1;height:9px;overflow:hidden;border-radius:9px;background:#eaf0f8}.bar-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#1769e0,#54a1ff);transition:width .2s}.section{margin-top:36px}.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:15px}.section-kicker{margin:0 0 4px;color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.08em}.section h2{font-size:25px;line-height:1.3;margin:0;letter-spacing:-.02em}.section-intro{max-width:720px;margin:7px 0 0;color:var(--muted);font-size:14px}.grid{display:grid;gap:14px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}.card h3{font-size:17px;line-height:1.4;margin:0 0 8px}.card p{margin:7px 0;color:#4f5f75}.card ul,.card ol{padding-left:21px;margin:9px 0;color:#4f5f75}.card li+li{margin-top:6px}.tag{display:inline-flex;align-items:center;border-radius:999px;padding:3px 9px;background:var(--soft-blue);color:#1556aa;font-size:12px;font-weight:750}.tag-warn{background:var(--orange-bg);color:var(--orange)}.tag-success{background:var(--green-bg);color:var(--green)}
+    .fault-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:22px}.fault{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}.fault small{display:block;color:rgba(255,255,255,.75);font-size:11px}.fault strong{font-size:14px;display:block;margin-top:3px;overflow-wrap:anywhere}.callout{border-radius:14px;padding:16px 18px;border:1px solid #f3d7b6;background:var(--orange-bg);color:#71430f}.callout strong{color:#713900}.callout p{margin:4px 0 0}.callout-blue{border-color:#d6e6fa;background:#f1f7ff;color:#36516e}.step-list{display:grid;gap:12px}.step-card{padding:0;overflow:hidden}.step-card details{border-radius:16px}.step-card summary{position:relative;display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;list-style:none;cursor:pointer;padding:17px 19px}.step-card summary::-webkit-details-marker{display:none}.step-no{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--soft-blue);color:var(--blue-dark);font-weight:850}.step-title{font-size:16px;font-weight:780;line-height:1.4}.step-meta{font-size:12px;color:var(--muted);margin-top:2px}.chevron{color:#75859b;font-size:20px;transition:transform .18s}.step-card details[open] .chevron{transform:rotate(180deg)}.step-body{border-top:1px solid var(--line);padding:18px 20px 20px}.step-body h4{font-size:14px;margin:15px 0 4px}.step-body h4:first-child{margin-top:0}.step-body p{color:#4f5f75;margin:6px 0}.step-body ol{padding-left:22px;color:#4f5f75;margin:6px 0}.step-body li+li{margin-top:5px}.cmdbox{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:11px 0;padding:12px 13px;background:#101b2d;border-radius:12px;color:#e7f0ff}.cmdbox code{font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.copy-btn{flex-shrink:0;border:1px solid #64748b;border-radius:8px;background:#23334b;color:#fff;padding:7px 10px;font-size:12px;font-weight:750}.expect{border-left:3px solid #39a879;padding:8px 12px;background:#f2faf6;border-radius:0 9px 9px 0;color:#285a42}.caution{border-left:3px solid #ee9b39;padding:8px 12px;background:#fff8ee;border-radius:0 9px 9px 0;color:#71430f}.complete-row{display:flex;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--line);font-weight:700;font-size:14px;cursor:pointer}.complete-row input{width:20px;height:20px;accent-color:var(--blue)}.complete-row span{color:#43536b}.feedback{display:grid;gap:14px}.field{display:grid;gap:6px}.field label{font-size:13px;font-weight:750}.field input,.field textarea,.field select{width:100%;min-height:46px;padding:11px 12px;border:1px solid #cad6e4;border-radius:10px;background:white;color:var(--ink)}.field textarea{resize:vertical;min-height:110px}.field input:focus,.field textarea:focus,.field select:focus{outline:3px solid rgba(23,105,224,.15);border-color:var(--blue)}.feedback-actions{display:flex;gap:10px;flex-wrap:wrap}.privacy-note{font-size:12px;color:var(--muted)}.footer{margin-top:38px;padding:20px 0;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.toast{position:fixed;left:50%;bottom:20px;z-index:10;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#13233a;color:white;border-radius:10px;padding:10px 15px;box-shadow:0 5px 20px rgba(0,0,0,.18);transition:.18s}.toast.show{opacity:1;transform:translate(-50%,0)}.success-banner{display:none;margin-top:14px;padding:12px 15px;border:1px solid #b9e4cc;background:var(--green-bg);border-radius:12px;color:var(--green);font-weight:750}.success-banner.show{display:block}
+    @media(max-width:760px){.shell{width:min(100% - 24px,600px)}.top-inner{min-height:58px;gap:10px}.brand{font-size:14px}.nav{display:none}.print-top{margin-left:auto}.hero{padding:27px 22px;border-radius:19px}.hero h1{font-size:30px}.fault-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.fault{padding:10px}.fault strong{font-size:13px}.progress-card{padding:15px 16px}.section{margin-top:28px}.section h2{font-size:22px}.grid-2{grid-template-columns:1fr}.card{padding:17px}.step-card summary{grid-template-columns:36px 1fr auto;gap:10px;padding:15px 14px}.step-no{width:34px;height:34px}.step-title{font-size:15px}.step-body{padding:16px 15px}.complete-row{padding:13px 15px}.cmdbox{align-items:flex-start;flex-direction:column}.copy-btn{min-height:40px}.button{min-height:48px}.hero-actions .button{flex:1 1 155px}}
+    @media print{body{background:white;font-size:11pt}.shell{width:100%;max-width:none}.topbar,.hero-actions,.copy-btn,.print-top,.feedback-actions,.toast,.complete-row input{display:none!important}.hero{padding:20px;background:#1769e0!important;box-shadow:none;print-color-adjust:exact;-webkit-print-color-adjust:exact}.progress-card,.card,.step-card{box-shadow:none;break-inside:avoid}.section{margin-top:22px}.step-card details:not([open])>.step-body{display:block}.step-card details:not([open]) .chevron{display:none}.step-card summary{padding:10px}.step-body{padding:12px}.step-list{gap:8px}.footer{margin-top:20px}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="shell top-inner">
+    <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">H</span><span>HONOR 维修指引</span></a>
+    <nav class="nav" aria-label="页面导航"><a href="#repair">系统修复</a><a href="#doubao">豆包教程</a><a href="#graphics">显卡驱动</a><a href="#hypervisor">Hypervisor</a><a href="#hardware">硬件检查</a><a href="#feedback">故障反馈</a></nav>
+    <button class="print-top" type="button" onclick="window.print()">打印 / 存为 PDF</button>
+  </div></header>
+  <main class="shell" id="top">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="eyebrow">HONOR · WINDOWS 11 · 分步排查</div>
+      <h1 id="page-title">荣耀笔记本系统异常修复指南</h1>
+      <p>小白也能跟着操作。按顺序一次只做一步，先记录结果，再决定下一步；本页面不会自动运行命令或更改电脑设置。</p>
+      <div class="fault-grid" aria-label="故障信息">
+        <div class="fault"><small>电脑品牌</small><strong>荣耀 HONOR</strong></div>
+        <div class="fault"><small>处理器 / 内存</small><strong>Intel i5-12450H · 16 GB</strong></div>
+        <div class="fault"><small>系统 / 显卡</small><strong>Windows 11 · Intel 核显 + NVIDIA 独显（型号待确认）</strong></div>
+        <div class="fault"><small>现象 / 错误</small><strong>随机蓝屏 · 0x00020001 · dwm.exe 0xc0000409</strong></div>
+      </div>
+      <div class="hero-actions">
+        <a class="button button-light" href="#repair">开始分步排查 <span aria-hidden="true">↓</span></a>
+        <button class="button button-ghost" type="button" data-copy="diagnostic">复制豆包诊断指令</button>
+      </div>
+    </section>
+
+    <section class="progress-card" aria-label="修复进度">
+      <div><div class="progress-heading">系统修复进度</div><div class="progress-note" id="progress-note">勾选完成的步骤，进度会保存在此浏览器中。</div></div>
+      <div class="progress-number" id="progress-count" aria-live="polite">0 / 5</div>
+      <div class="bar" role="progressbar" aria-label="系统修复进度" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><div class="bar-fill" id="progress-fill"></div></div>
+    </section>
+
+    <section class="section" id="repair">
+      <div class="section-head"><div><p class="section-kicker">按顺序操作 · 每次只做一项</p><h2>系统修复步骤</h2><p class="section-intro">先保存正在编辑的文件并备份重要资料。命令都需要你手动复制、粘贴和确认；命令窗口必须以管理员身份打开的步骤会明确标出。</p></div></div>
+      <div class="callout" role="note"><strong>安全提醒：不要一次执行全部命令</strong><p>每完成一项就等它结束、读懂结果并记录，再继续。修复过程中如果蓝屏、断电或出现无法理解的提示，请停止操作并保存截图；不要尝试删除驱动、改注册表或关闭安全功能。</p></div>
+      <div class="step-list" style="margin-top:14px">
+        <article class="card step-card"><details open>
+          <summary><span class="step-no">01</span><span><span class="step-title">检查 Windows 版本和更新状态</span><span class="step-meta">先确认当前版本与待安装更新</span></span><span class="chevron" aria-hidden="true">⌄</span></summary>
+          <div class="step-body"><h4>操作方法</h4><ol><li>打开「开始」→「设置」→「系统」→「关于」，在「Windows 规格」中记下版本和 OS 内部版本。</li><li>回到「设置」→「Windows 更新」，查看是否有更新正在等待安装、安装失败或需要重启。</li><li>如果有更新，先保存工作并按 Windows 提示完成更新；重启后观察电脑是否还蓝屏。不要在更新过程中强制关机。</li></ol><h4>预期结果</h4><p class="expect">能记下 Windows 11 版本与更新状态；更新完成后正常进入桌面。</p><h4>遇到问题怎么办</h4><p class="caution">更新失败时记录错误代码并截图，不要反复强制重启。可以先跳过更新操作，继续记录其他信息，稍后联系荣耀支持或可信的维修人员。</p></div>
+          <label class="complete-row"><input class="step-check" type="checkbox" data-step="1"><span>我已完成并记录结果</span></label>
+        </details></article>
+
+        <article class="card step-card"><details>
+          <summary><span class="step-no">02</span><span><span class="step-title">检查 Windows 组件状态</span><span class="step-meta">DISM CheckHealth · 通常很快完成 · 管理员权限</span></span><span class="chevron" aria-hidden="true">⌄</span></summary>
+          <div class="step-body"><h4>操作方法</h4><ol><li>在「开始」按钮上点右键，选择「终端（管理员）」或「Windows PowerShell（管理员）」，在权限提示中选择「是」。</li><li>只复制下面这一条命令，粘贴到窗口中并按 Enter。等命令显示完成后再读结果。</li></ol>
+            <div class="cmdbox"><code>DISM /Online /Cleanup-Image /CheckHealth</code><button class="copy-btn" type="button" data-copy="DISM /Online /Cleanup-Image /CheckHealth">复制命令</button></div>
+            <h4>预期结果</h4><p class="expect">显示「未检测到组件存储损坏」或类似健康状态，表示此项检查结束。记录完整结果。</p><h4>失败时怎么办</h4><p class="caution">如果提示不是管理员、命令无法识别或报告组件存储损坏，先截图并记录原文。不要输入其他命令；完成本项后再决定是否继续下一步。</p></div>
+          <label class="complete-row"><input class="step-check" type="checkbox" data-step="2"><span>我已完成并记录结果</span></label>
+        </details></article>
+
+        <article class="card step-card"><details>
+          <summary><span class="step-no">03</span><span><span class="step-title">深度扫描组件存储</span><span class="step-meta">DISM ScanHealth · 可能需要较长时间 · 管理员权限</span></span><span class="chevron" aria-hidden="true">⌄</span></summary>
+          <div class="step-body"><h4>操作方法</h4><ol><li>确认上一步命令已经结束，再在同一个管理员终端中单独运行本命令。</li><li>扫描可能持续一段时间，进度看起来暂时不动也请耐心等待。接通电源，不要关闭窗口或强制关机。</li></ol>
+            <div class="cmdbox"><code>DISM /Online /Cleanup-Image /ScanHealth</code><button class="copy-btn" type="button" data-copy="DISM /Online /Cleanup-Image /ScanHealth">复制命令</button></div>
+            <h4>预期结果</h4><p class="expect">结果会说明组件存储是否可修复、是否存在损坏，或未发现损坏。请记下完整文字。</p><h4>失败时怎么办</h4><p class="caution">遇到错误代码、进度长时间没有变化或电脑异常发热时，先拍照并记录。不要连续重复扫描；根据扫描结果再判断第四步是否适用。</p></div>
+          <label class="complete-row"><input class="step-check" type="checkbox" data-step="3"><span>我已完成并记录结果</span></label>
+        </details></article>
+
+        <article class="card step-card"><details>
+          <summary><span class="step-no">04</span><span><span class="step-title">按扫描结果决定是否修复</span><span class="step-meta">只有扫描报告可修复的损坏时才运行 · 管理员权限</span></span><span class="chevron" aria-hidden="true">⌄</span></summary>
+          <div class="step-body"><div class="callout callout-blue"><strong>先看第三步的结果，再做决定</strong><p>如果 ScanHealth 明确显示未发现损坏或组件存储健康，请跳过下面的修复命令，直接进行第五步。如果报告组件存储损坏且可以修复，再按以下方法操作。</p></div><h4>操作方法</h4><ol><li>保持电脑接通电源、网络畅通，并确保 ScanHealth 已结束。</li><li>仅当扫描报告可修复的组件存储损坏时，才在管理员终端中单独运行下面的命令。修复可能需要一段时间。</li></ol>
+            <div class="cmdbox"><code>DISM /Online /Cleanup-Image /RestoreHealth</code><button class="copy-btn" type="button" data-copy="DISM /Online /Cleanup-Image /RestoreHealth">复制命令</button></div>
+            <h4>预期结果</h4><p class="expect">提示还原操作成功完成。记录结果，等命令完全结束后再进行第五步。</p><h4>失败时怎么办</h4><p class="caution">如果报告无法修复、来源文件找不到或有错误代码，请停止，不要从陌生网站下载系统文件。截取完整提示，先寻求荣耀官方支持或可信的维修人员帮助。</p></div>
+          <label class="complete-row"><input class="step-check" type="checkbox" data-step="4"><span>我已查看第三步结果并按提示处理（或跳过修复）</span></label>
+        </details></article>
+
+        <article class="card step-card"><details>
+          <summary><span class="step-no">05</span><span><span class="step-title">检查并修复 Windows 系统文件</span><span class="step-meta">SFC 扫描 · 可能需要一些时间 · 管理员权限</span></span><span class="chevron" aria-hidden="true">⌄</span></summary>
+          <div class="step-body"><h4>操作方法</h4><ol><li>确认第四步已结束，或者第三步显示无需修复后，再单独运行本命令。</li><li>在管理员终端中输入命令，等待验证到 100% 并显示最终结果。请勿中途关闭窗口。</li><li>如果提示修复了文件，记录结果并按提示正常重启一次；重启后观察是否还蓝屏。</li></ol>
+            <div class="cmdbox"><code>sfc /scannow</code><button class="copy-btn" type="button" data-copy="sfc /scannow">复制命令</button></div>
+            <h4>预期结果</h4><p class="expect">可能显示未发现完整性冲突、发现并修复了损坏文件，或发现损坏但无法修复。三种结果都要记录。</p><h4>失败时怎么办</h4><p class="caution">如无法修复或出现错误代码，先保存结果和截图，不要反复运行命令。若蓝屏仍出现，进入下面的驱动、Hypervisor 和硬件排查并向专业人员提供记录。</p></div>
+          <label class="complete-row"><input class="step-check" type="checkbox" data-step="5"><span>我已完成并记录结果</span></label>
+        </details></article>
+      </div>
+      <div class="success-banner" id="success-banner" role="status">五项流程已标记完成。请观察电脑是否还蓝屏，并保留结果记录。</div>
+    </section>
+
+    <section class="section" id="doubao">
+      <div class="section-head"><div><p class="section-kicker">可选辅助工具</p><h2>豆包使用教程</h2><p class="section-intro">豆包可以帮忙解释错误提示，但 AI 的建议不等于官方维修结论。遇到需要改系统安全设置、删除驱动或刷写 BIOS 的建议时，先停下并核实。</p></div></div>
+      <div class="grid grid-2">
+        <article class="card"><span class="tag">开始对话</span><h3 style="margin-top:10px">打开官网并新建聊天</h3><ol><li>在浏览器地址栏手动输入 <strong>doubao.com</strong>，确认域名拼写正确后打开。不要通过搜索广告或来路不明的下载站进入。</li><li>点页面上的「新对话」「新建聊天」或类似按钮。界面名称可能会变化。</li><li>点击本页顶部「复制豆包诊断指令」，回到聊天框粘贴并发送。</li></ol><a class="button button-outline" href="https://www.doubao.com/" target="_blank" rel="noopener noreferrer">打开豆包官网 ↗</a></article>
+        <article class="card"><span class="tag">一次只安排一个操作</span><h3 style="margin-top:10px">按这个节奏和豆包沟通</h3><ol><li>要求它每次只给出一个操作，写明具体点击位置、预期结果和停止条件。</li><li>做完这一步后，再把结果原文或截图发回去，等它解释后才询问下一步。</li><li>如果建议与本页安全提醒冲突，或涉及关闭安全功能、改注册表、卸载驱动、BIOS 更新，请先停止并咨询官方支持。</li></ol><button class="button button-blue" type="button" data-copy="diagnostic">复制诊断指令</button></article>
+        <article class="card"><span class="tag">分享截图</span><h3 style="margin-top:10px">上传截图并反馈结果</h3><ol><li>命令结束后，先截取完整窗口和错误文字，不要只截一半。</li><li>发送到豆包前，检查截图有没有姓名、手机号、邮箱、电脑序列号、账号或私人文件名等信息；有的话先裁剪或涂掉。</li><li>在聊天框使用图片/附件按钮选择截图，再补充「当前步骤、运行了什么、完整结果、是否重启」。不要上传密码或验证码。</li></ol><p class="privacy-note">发送图片会把图片交给第三方服务处理。只分享你愿意提供的内容。</p></article>
+        <article class="card"><span class="tag">指令模板</span><h3 style="margin-top:10px">复制后贴入新聊天</h3><p>模板包含本机已知故障信息，并要求豆包分步指导。你可以先删去不想分享的内容。</p><button class="button button-outline" type="button" data-copy="diagnostic">复制诊断指令</button></article>
+      </div>
+    </section>
+
+    <section class="section" id="graphics">
+      <div class="section-head"><div><p class="section-kicker">先识别，再核对</p><h2>显卡驱动排查</h2><p class="section-intro">Intel 核显和 NVIDIA 独显的准确型号尚未确认。先收集信息，不要盲目卸载或替换驱动。</p></div></div>
+      <div class="grid grid-2">
+        <article class="card"><h3>查看显卡型号与驱动版本</h3><ol><li>右键「开始」→「设备管理器」→展开「显示适配器」，记录 Intel 和 NVIDIA 项目的完整名称。</li><li>逐个右键设备→「属性」→「驱动程序」，记录驱动提供商、日期和版本。</li><li>也可以在「任务管理器」→「性能」中查看 GPU 名称。遇到感叹号时截图记录。</li></ol><p class="privacy-note">设备管理器里可选择「回滚驱动程序」等操作；先不要点击任何更改按钮。</p></article>
+        <article class="card"><h3>优先核对荣耀官方驱动</h3><p>先从荣耀官方网站的驱动下载页按笔记本准确型号查找 Windows 11 驱动，核对版本、发布日期和适用机型。型号不确定时先查看电脑底部标签或「设置 → 系统 → 关于」。</p><p><a href="https://www.honor.com/cn/support/downloads/" target="_blank" rel="noopener noreferrer">前往 HONOR 官方驱动下载 ↗</a></p><div class="callout" style="margin-top:12px"><strong>不要盲目清理驱动</strong><p>不建议未经确认使用 DDU，也不要一次卸载所有显卡驱动。若问题出现在某次更新后，先记录更新日期和驱动版本，再向荣耀支持咨询。</p></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="hypervisor">
+      <div class="section-head"><div><p class="section-kicker">记录状态 · 不急着更改</p><h2>Hypervisor 与虚拟化安全排查</h2><p class="section-intro">0x00020001 是蓝屏报告中的错误代码，单凭代码无法确认根因。先读取当前设置和状态，不要为了尝试修复而关闭安全功能。</p></div></div>
+      <div class="grid grid-2">
+        <article class="card"><h3>查看 Hyper-V 功能状态</h3><ol><li>在开始菜单搜索「启用或关闭 Windows 功能」，打开窗口后只查看状态。</li><li>记录「Hyper-V」「虚拟机平台」「Windows 虚拟机监控程序平台」是否勾选，然后关闭窗口。</li><li>请不要勾选或取消勾选任何项目；更改可能影响虚拟机、模拟器或安全功能。</li></ol></article>
+        <article class="card"><h3>查看 VBS 与内存完整性</h3><ol><li>按开始菜单搜索「系统信息」，查看「基于虚拟化的安全性」状态并记录。</li><li>打开「Windows 安全中心」→「设备安全性」→「核心隔离详细信息」，只查看「内存完整性」当前开/关状态。</li><li>不要直接关闭内存完整性或其他 Windows 安全功能。如果页面提示冲突驱动，记录驱动名称并先核实来源。</li></ol></article>
+      </div>
+      <div class="callout" style="margin-top:14px"><strong>遇到安全设置变更建议，先暂停</strong><p>关闭 Hyper-V、VBS 或内存完整性会降低防护或影响依赖虚拟化的软件。只有确认具体原因、理解影响并得到可靠指导后，才考虑调整。</p></div>
+    </section>
+
+    <section class="section" id="hardware">
+      <div class="section-head"><div><p class="section-kicker">无需拆机的初步检查</p><h2>硬件检查清单</h2><p class="section-intro">硬件信息先读取和记录。若出现异响、异味、异常高温或反复蓝屏，请保存资料后停止高负载使用并联系官方维修。</p></div></div>
+      <div class="grid grid-2">
+        <article class="card"><h3>SSD 健康状态</h3><p>打开「设置 → 系统 → 存储 → 高级存储设置 → 磁盘和卷」，选择磁盘查看「属性」中的健康状态（若系统提供此项）。也可用荣耀官方诊断工具检查。出现预警或读写异常时，优先备份重要文件并联系维修。</p></article>
+        <article class="card"><h3>内存稳定性</h3><p>如果需要，可在开始菜单搜索「Windows 内存诊断」并按提示安排检查。此操作会重启电脑；先保存并关闭所有工作，接通电源。若不确定或电脑频繁蓝屏，先让维修人员协助。</p></article>
+        <article class="card"><h3>CPU 温度与散热</h3><p>使用荣耀官方诊断/管家中可用的硬件检测功能。保证笔记本放在坚硬平整的表面，出风口不被遮挡。不要为了测温运行压力测试或拆机；持续高温、风扇异响请停止高负载任务。</p></article>
+        <article class="card"><h3>BIOS 版本</h3><p>在开始菜单搜索「系统信息」，记录「BIOS 版本/日期」和电脑完整型号。此处只记录版本；不要因为有新版本就自行升级 BIOS。BIOS 更新中断可能导致电脑无法启动，请先咨询荣耀官方支持。</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="feedback">
+      <div class="section-head"><div><p class="section-kicker">记录后再求助</p><h2>故障反馈区</h2><p class="section-intro">把步骤、提示和代码整理好，有助于家人、维修人员或豆包了解发生了什么。</p></div></div>
+      <div class="card"><form class="feedback" id="feedback-form">
+        <div class="field"><label for="current-step">当前执行步骤</label><select id="current-step"><option value="">请选择</option><option>第 1 步：Windows 版本与更新</option><option>第 2 步：DISM CheckHealth</option><option>第 3 步：DISM ScanHealth</option><option>第 4 步：DISM RestoreHealth（如适用）</option><option>第 5 步：SFC 系统文件检查</option><option>显卡驱动排查</option><option>Hypervisor / VBS 排查</option><option>硬件检查</option><option>其他</option></select></div>
+        <div class="field"><label for="screen-prompt">屏幕提示 / 完整结果</label><textarea id="screen-prompt" placeholder="请尽量照抄屏幕上的原文，或先移除个人信息再粘贴"></textarea></div>
+        <div class="field"><label for="error-code">错误代码（没有可留空）</label><input id="error-code" placeholder="例如：0x00020001 或 0xc0000409"></div>
+        <div class="field"><label for="repair-result">是否修复成功</label><select id="repair-result"><option value="">请选择</option><option>还没有完成</option><option>暂时没有再蓝屏</option><option>仍然蓝屏</option><option>命令报告无法修复</option><option>不确定</option></select></div>
+        <div class="feedback-actions"><button class="button button-blue" type="submit">复制反馈内容</button><button class="button button-outline" type="button" id="reset-feedback">清空本次填写</button></div>
+        <div class="privacy-note">填写内容只在当前页面临时使用，不会上传或保存到服务器。点击「复制反馈内容」后才会写入你的剪贴板；分享前请检查并移除个人信息。</div>
+      </form></div>
+    </section>
+
+    <footer class="footer"><strong>使用说明：</strong>本页为通用排查参考，不能替代荣耀官方技术支持或专业维修诊断。页面进度只保存在当前浏览器本地；清除浏览器数据会清除进度。任何命令都由你手动选择执行，不会由本页自动运行。<br>蓝屏代码和应用程序异常代码可能有多种原因，应结合完整日志、驱动和硬件检测结果判断。</footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    (()=>{
+      const diagnostic=`请像耐心的电脑维修助手一样，用中文协助我排查荣耀 HONOR 笔记本 Windows 11 随机蓝屏。配置：Intel i5-12450H、16GB 内存、Intel 核显 + NVIDIA 独显（具体型号待确认）。现象：随机蓝屏，荣耀电脑管家提示“系统模块异常”，蓝屏记录 0x00020001（HYPERVISOR_ERROR），dwm.exe 异常代码 0xc0000409。\n\n请严格遵守：\n1. 每次只给我一个操作，不要一次列出一串命令；先说明目的、点击/输入位置、预期结果和失败时的停止条件。\n2. 等我反馈当前结果后，再解释并给下一步。命令必须让我手动确认后执行，不要声称可以替我操作电脑。\n3. 优先使用 Windows 设置和荣耀官方支持提供的安全检查方法。涉及管理员权限、重启、驱动更改、安全设置或 BIOS 更新时，先解释影响并要求我确认。\n4. 不要建议我盲目卸载所有显卡驱动、使用 DDU、修改注册表、关闭所有安全功能或从陌生网站下载系统文件/驱动。\n5. 错误代码不一定能单独确定原因；请先询问我当前步骤、屏幕完整提示和已完成的检查。\n\n我现在希望从最安全、最简单的一步开始。请只给出这一个步骤。`;
+      const storageKey='honor-win11-repair-progress-v1';
+      const checks=[...document.querySelectorAll('.step-check')];
+      const fill=document.getElementById('progress-fill');
+      const count=document.getElementById('progress-count');
+      const note=document.getElementById('progress-note');
+      const bar=document.querySelector('[role="progressbar"]');
+      const banner=document.getElementById('success-banner');
+      const toast=document.getElementById('toast');
+      let toastTimer;
+      let storageReady=true;
+      async function copyText(value){try{await navigator.clipboard.writeText(value);return true}catch{const area=document.createElement('textarea');area.value=value;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();let copied=false;try{copied=document.execCommand('copy')}catch{}area.remove();return copied}}
+      function announce(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
+      function updateProgress(){const done=checks.filter(c=>c.checked).length;const pct=checks.length?done/checks.length*100:0;fill.style.width=pct+'%';count.textContent=`${done} / ${checks.length}`;bar.setAttribute('aria-valuenow',String(done));note.textContent=done===0?(storageReady?'勾选完成的步骤，进度会保存在此浏览器中。':'此浏览器不允许保存进度；关闭页面后勾选状态可能丢失。'):done===checks.length?'全部步骤已标记完成。继续观察是否复发。':`已完成 ${done} 项；请继续一次只处理一个步骤。`;banner.classList.toggle('show',done===checks.length)}
+      try{const saved=JSON.parse(localStorage.getItem(storageKey)||'{}');checks.forEach(c=>{c.checked=Boolean(saved[c.dataset.step])})}catch{storageReady=false}
+      updateProgress();
+      checks.forEach(c=>c.addEventListener('change',()=>{try{const state={};checks.forEach(item=>state[item.dataset.step]=item.checked);localStorage.setItem(storageKey,JSON.stringify(state))}catch{storageReady=false}updateProgress()}));
+      document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{const value=button.dataset.copy==='diagnostic'?diagnostic:button.dataset.copy;const copied=await copyText(value);announce(copied?(button.dataset.copy==='diagnostic'?'豆包诊断指令已复制':'命令已复制'):'复制失败，请手动选择并复制')}));
+      document.getElementById('feedback-form').addEventListener('submit',async event=>{event.preventDefault();const fields=[['当前执行步骤',document.getElementById('current-step').value],['屏幕提示',document.getElementById('screen-prompt').value.trim()],['错误代码',document.getElementById('error-code').value.trim()],['是否修复成功',document.getElementById('repair-result').value]];const text=fields.map(([label,value])=>`${label}：${value||'未填写'}`).join('\n');announce(await copyText(text)?'反馈内容已复制，请检查后再分享':'复制失败，请稍后重试')});
+      document.getElementById('reset-feedback').addEventListener('click',()=>{document.getElementById('feedback-form').reset();announce('已清空本次填写')});
+    })();
+  </script>
+</body>
+</html>
